@@ -6,6 +6,13 @@ from django.db import models
 
 class ModelTestSupport(TestCase):
 
+    def model_default_test(self, instance):
+        self.assertEqual(instance.db_table,
+                         u'rango_' + instance.model_name)
+        self.assertEqual(instance.verbose_name,
+                         u'' + instance.model_name)
+        self.assertEqual(instance.has_auto_field, True)
+
     def field_test(self, field, **validators):
         self.assertEqual(field.null, False)
         self.assertEqual(field._error_messages, None)
@@ -26,10 +33,7 @@ class ModelCategoryTest(ModelTestSupport):
         self.category = Category(name='cat name')
 
     def test_model(self):
-        self.assertEqual(self.category._meta.db_table, u'rango_category')
-        self.assertEqual(self.category._meta.verbose_name, u'category')
-        self.assertEqual(self.category._meta.model_name, 'category')
-        self.assertEqual(self.category._meta.has_auto_field, True)
+        self.model_default_test(self.category._meta)
 
     def test_id_field(self):
         self.field_test(self.category._meta.get_field('id'),
@@ -56,10 +60,7 @@ class ModelPageTest(ModelTestSupport):
         self.page = Page(title='title name')
 
     def test_model(self):
-        self.assertEqual(self.page._meta.db_table, u'rango_page')
-        self.assertEqual(self.page._meta.verbose_name, u'page')
-        self.assertEqual(self.page._meta.model_name, 'page')
-        self.assertEqual(self.page._meta.has_auto_field, True)
+        self.model_default_test(self.page._meta)
 
     def test_id_field(self):
         self.field_test(self.page._meta.get_field('id'),
