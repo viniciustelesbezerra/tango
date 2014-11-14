@@ -4,67 +4,9 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 
-class ModelCategoryTest(TestCase):
+class ModelTestSupport(TestCase):
 
-    def setUp(self):
-        self.category = Category(name='cat name')
-
-    def test_db_table_name(self):
-        self.assertEqual(Page._meta.db_table, u'rango_page')
-
-    def test_attrs_values(self):
-        self.assertEqual(self.category.name, 'cat name')
-
-    def test_unicode(self):
-        self.assertEqual(self.category.__unicode__(), 'cat name')
-
-
-class ModelPageTest(TestCase):
-
-    def setUp(self):
-        self.page = Page(title='title name')
-
-    def test_model(self):
-        self.assertEqual(self.page._meta.db_table, u'rango_page')
-        self.assertEqual(self.page._meta.verbose_name, u'page')
-        self.assertEqual(self.page._meta.model_name, 'page')
-        self.assertEqual(self.page._meta.has_auto_field, True)
-
-    def test_id_field(self):
-        self.__field_test(self.page._meta.get_field('id'),
-                          blank=True,
-                          verbose_name=u'ID',
-                          max_length=None,
-                          type=models.fields.AutoField)
-
-    def test_title_field(self):
-        self.__field_test(self.page._meta.get_field('title'),
-                          max_length=128,
-                          type=models.fields.CharField)
-
-    def test_url_field(self):
-        self.__field_test(self.page._meta.get_field('url'),
-                          max_length=200,
-                          type=models.fields.URLField)
-
-    def test_views_field(self):
-        self.__field_test(self.page._meta.get_field('views'),
-                          max_length=None,
-                          type=models.fields.IntegerField)
-
-    def test_category_field(self):
-        self.__field_test(self.page._meta.get_field('category'),
-                          max_length=None,
-                          type=models.fields.related.ForeignKey,
-                          rel_type=models.fields.related.ManyToOneRel)
-
-    def test_attrs_values(self):
-        self.assertEqual(self.page.title, 'title name')
-
-    def test_unicode(self):
-        self.assertEqual(self.page.__unicode__(), 'title name')
-
-    def __field_test(self, field, **validators):
+    def field_test(self, field, **validators):
         self.assertEqual(field.null, False)
         self.assertEqual(field._error_messages, None)
 
@@ -76,6 +18,82 @@ class ModelPageTest(TestCase):
                          validators.get('rel_type', type(None)))
         self.assertEqual(field._verbose_name,
                          validators.get('verbose_name', None))
+
+
+class ModelCategoryTest(ModelTestSupport):
+
+    def setUp(self):
+        self.category = Category(name='cat name')
+
+    def test_model(self):
+        self.assertEqual(self.category._meta.db_table, u'rango_category')
+        self.assertEqual(self.category._meta.verbose_name, u'category')
+        self.assertEqual(self.category._meta.model_name, 'category')
+        self.assertEqual(self.category._meta.has_auto_field, True)
+
+    def test_id_field(self):
+        self.field_test(self.category._meta.get_field('id'),
+                        blank=True,
+                        verbose_name=u'ID',
+                        max_length=None,
+                        type=models.fields.AutoField)
+
+    def test_name_field(self):
+        self.field_test(self.category._meta.get_field('name'),
+                        max_length=128,
+                        type=models.fields.CharField)
+
+    def test_attrs_values(self):
+        self.assertEqual(self.category.name, 'cat name')
+
+    def test_unicode(self):
+        self.assertEqual(self.category.__unicode__(), 'cat name')
+
+
+class ModelPageTest(ModelTestSupport):
+
+    def setUp(self):
+        self.page = Page(title='title name')
+
+    def test_model(self):
+        self.assertEqual(self.page._meta.db_table, u'rango_page')
+        self.assertEqual(self.page._meta.verbose_name, u'page')
+        self.assertEqual(self.page._meta.model_name, 'page')
+        self.assertEqual(self.page._meta.has_auto_field, True)
+
+    def test_id_field(self):
+        self.field_test(self.page._meta.get_field('id'),
+                        blank=True,
+                        verbose_name=u'ID',
+                        max_length=None,
+                        type=models.fields.AutoField)
+
+    def test_title_field(self):
+        self.field_test(self.page._meta.get_field('title'),
+                        max_length=128,
+                        type=models.fields.CharField)
+
+    def test_url_field(self):
+        self.field_test(self.page._meta.get_field('url'),
+                        max_length=200,
+                        type=models.fields.URLField)
+
+    def test_views_field(self):
+        self.field_test(self.page._meta.get_field('views'),
+                        max_length=None,
+                        type=models.fields.IntegerField)
+
+    def test_category_field(self):
+        self.field_test(self.page._meta.get_field('category'),
+                        max_length=None,
+                        type=models.fields.related.ForeignKey,
+                        rel_type=models.fields.related.ManyToOneRel)
+
+    def test_attrs_values(self):
+        self.assertEqual(self.page.title, 'title name')
+
+    def test_unicode(self):
+        self.assertEqual(self.page.__unicode__(), 'title name')
 
 
 class ViewsTestSimple(SimpleTestCase):
