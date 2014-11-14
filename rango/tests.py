@@ -47,6 +47,16 @@ class ModelCategoryTest(ModelTestSupport):
                         max_length=128,
                         type=models.fields.CharField)
 
+    def test_views_field(self):
+        self.field_test(self.category._meta.get_field('views'),
+                        max_length=None,
+                        type=models.fields.IntegerField)
+
+    def test_likes_field(self):
+        self.field_test(self.category._meta.get_field('likes'),
+                        max_length=None,
+                        type=models.fields.IntegerField)
+
     def test_attrs_values(self):
         self.assertEqual(self.category.name, 'cat name')
 
