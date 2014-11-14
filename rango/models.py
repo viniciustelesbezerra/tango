@@ -1,19 +1,18 @@
-class Category:
+from django.db import models
 
-    def __init__(self, **kargs):
-        self.name = kargs.get('name', 'x')
+
+class Category(models.Model):
+    name = models.CharField(max_length=128, unique=True)
 
     def __unicode__(self):
         return self.name
 
 
-class Page:
-
-    def __init__(self, **kargs):
-        self.category = kargs.get('category', 'x')
-        self.title = kargs.get('title', 'x')
-        self.url = kargs.get('url', 'x')
-        self.views = kargs.get('views', 'x')
+class Page(models.Model):
+    title = models.CharField(max_length=128)
+    url = models.URLField()
+    views = models.IntegerField(default=0)
+    category = models.ForeignKey(Category)
 
     def __unicode__(self):
         return self.title
