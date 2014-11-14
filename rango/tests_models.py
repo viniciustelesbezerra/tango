@@ -20,6 +20,8 @@ class ModelTestSupport(TestCase):
         self.assertEqual(field.__class__, validators['type'])
 
         self.assertEqual(field.blank, validators.get('blank', False))
+        self.assertEqual(field.unique, validators.get('unique', False))
+
         self.assertEqual(field.rel.__class__,
                          validators.get('rel_type', type(None)))
         self.assertEqual(field._verbose_name,
@@ -36,14 +38,14 @@ class ModelCategoryTest(ModelTestSupport):
 
     def test_id_field(self):
         self.field_test(self.category._meta.get_field('id'),
-                        blank=True,
-                        verbose_name=u'ID',
-                        max_length=None,
+                        blank=True, verbose_name=u'ID',
+                        max_length=None, unique=True,
                         type=models.fields.AutoField)
 
     def test_name_field(self):
         self.field_test(self.category._meta.get_field('name'),
                         max_length=128,
+                        unique=True,
                         type=models.fields.CharField)
 
     def test_views_field(self):
@@ -55,6 +57,11 @@ class ModelCategoryTest(ModelTestSupport):
         self.field_test(self.category._meta.get_field('likes'),
                         max_length=None,
                         type=models.fields.IntegerField)
+
+    def test_slug_field(self):
+        self.field_test(self.category._meta.get_field('slug'),
+                        max_length=50, unique=True,
+                        type=models.fields.SlugField)
 
     def test_attrs_values(self):
         self.assertEqual(self.category.name, 'cat name')
@@ -73,9 +80,8 @@ class ModelPageTest(ModelTestSupport):
 
     def test_id_field(self):
         self.field_test(self.page._meta.get_field('id'),
-                        blank=True,
-                        verbose_name=u'ID',
-                        max_length=None,
+                        blank=True, verbose_name=u'ID',
+                        max_length=None, unique=True,
                         type=models.fields.AutoField)
 
     def test_title_field(self):

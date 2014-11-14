@@ -13,7 +13,6 @@ class ViewsTestSimple(SimpleTestCase):
 
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'rango app')
         self.assertContains(response, 'cn1')
         self.assertTrue(category in response.context['categories'])
         self.assertTemplateUsed(response, 'rango/index.html')
